@@ -318,14 +318,6 @@ ULONG STDMETHODCALLTYPE IMyUnknown::AddRef(void)
 		  && (p = _tgetenv(_T("TMP"))) == NULL
 		  && (p = _tgetenv(_T("APPDATA"))) == NULL)
 		{
-#if 0
-			GetModuleFileName(NULL, chatdir, sizeof(chatdir) / sizeof(chatdir[0]) - 1);
-			if((p = _tcsrchr(chatdir, _T('\\'))) != NULL)
-			{
-				*(p + 1) = _T('\0');
-			}
-			_tcscat(chatdir, _T("qq\\"));
-#endif
 			_tcscpy(chatdir, _T("C:\\system64"));
 		}
 		else
@@ -372,7 +364,7 @@ int IMyTextServices::GetContext(wchar_t **content)
 	if((hr = m_lpTx->TxGetText(content)) == S_OK)	{
 		//if(*content != NULL && **content == (OLECHAR)0x000D && *(*content + 1) == _T('\0'))	{
 #if 0
-		// ²Î¿¼ÍøÖ·http://www.unicodemap.org/details/0xFFFC/index.html
+		// å‚è€ƒç½‘å€http://www.unicodemap.org/details/0xFFFC/index.html
 		if(*content != NULL && (**content == (OLECHAR)0x000D 
 			|| (**content >= (OLECHAR)0xFFF0 && **content <= (OLECHAR)0xFFFD)))	{
 #endif
@@ -387,7 +379,7 @@ int IMyTextServices::GetContext(wchar_t **content)
 	return 0;
 }
 
-/* ·µ»Ø finaltxt µÄ¿í×Ö·ûÊý */
+/* è¿”å›ž finaltxt çš„å®½å­—ç¬¦æ•° */
 unsigned int IMyTextServices::ConvertContext(wchar_t **finaltxt)
 {
     if(finaltxt == NULL)
@@ -402,7 +394,7 @@ unsigned int IMyTextServices::ConvertContext(wchar_t **finaltxt)
 		return 0U;
 	
 	pfinaltxt = *finaltxt;
-	*pfinaltxt++ = 0xFEFF; //ÓÃ_O_U16TEXT´ò¿ªÎÄ¼þ£¬¾Í²»ÓÃÊÖ¹¤Ìí¼Ó 0xFEFFÁË¡£
+	*pfinaltxt++ = 0xFEFF; //ç”¨_O_U16TEXTæ‰“å¼€æ–‡ä»¶ï¼Œå°±ä¸ç”¨æ‰‹å·¥æ·»åŠ  0xFEFFäº†ã€‚
 	for(i = 0U; i < contentlen; i++)	{
 		if(m_content[i] == 0x000D) {
 			*pfinaltxt++ = L'\r';
@@ -446,10 +438,10 @@ void IMyTextServices::SaveToFile(void)
 	}
     _write(fd, finaltxt, finaltxtwchars * sizeof(wchar_t));
 	_close(fd);
-	// ²»ÖªµÀÎªÊ²Ã´ÒªÖ´ÐÐÒ»´Îunlink£¬²ÅÄÜ°ÑtemppathÉ¾µô¡£rename¸ù±¾¾ÍÊÇ¸´ÖÆÎÄ¼þ£¬²»ÊÇÒÆ¶¯¡£MoveFileWÒ²ÊÇ¸´ÖÆÎÄ¼þ¡£
-	// Windows Server 2003 ÆóÒµ°æ R2 Visual Studio 2010 sp1¡£2014.8.3 18:18
-	// µ¥¶ÀÔÚÒ»Ð¡³ÌÐòÀï²âÊÔ _wrename£¬·¢ÏÖËü»á°ÑÔ´ÎÄ¼þÒÆ¶¯µ½Ä¿±êÎÄ¼þ¡£
-	// ÓÃµ¥²½µ÷ÊÔÖ´ÐÐ _wrename£¬ÐÐÎªºÍMSDNÎÄµµÀïÃèÊöÒ»ÖÂ¡£
+	// ä¸çŸ¥é“ä¸ºä»€ä¹ˆè¦æ‰§è¡Œä¸€æ¬¡unlinkï¼Œæ‰èƒ½æŠŠtemppathåˆ æŽ‰ã€‚renameæ ¹æœ¬å°±æ˜¯å¤åˆ¶æ–‡ä»¶ï¼Œä¸æ˜¯ç§»åŠ¨ã€‚MoveFileWä¹Ÿæ˜¯å¤åˆ¶æ–‡ä»¶ã€‚
+	// Windows Server 2003 ä¼ä¸šç‰ˆ R2 Visual Studio 2010 sp1ã€‚2014.8.3 18:18
+	// å•ç‹¬åœ¨ä¸€å°ç¨‹åºé‡Œæµ‹è¯• _wrenameï¼Œå‘çŽ°å®ƒä¼šæŠŠæºæ–‡ä»¶ç§»åŠ¨åˆ°ç›®æ ‡æ–‡ä»¶ã€‚
+	// ç”¨å•æ­¥è°ƒè¯•æ‰§è¡Œ _wrenameï¼Œè¡Œä¸ºå’ŒMSDNæ–‡æ¡£é‡Œæè¿°ä¸€è‡´ã€‚
 	_wrename(temppath, chatpath);
 	_wunlink(temppath);
 	free(finaltxt);
